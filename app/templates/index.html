@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" data-acc="lime">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+<title>Cutout – Remove image backgrounds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="glow" aria-hidden="true"><i></i></div>
+<header><a class="logo" href="/" aria-label="Cutout home">{% include "_logo.html" %}<span>Cutout</span></a><div class="tools"><div class="dots" role="group" aria-label="Accent colour"><button data-acc="lime" style="background:#c6ff00" aria-pressed="true" aria-label="Neon lime"></button><button data-acc="orange" style="background:#ff5a1f" aria-pressed="false" aria-label="Burnt orange"></button></div><button class="btn" id="theme">Light / Dark</button></div></header>
+<main>
+<h1>Cut out any <span>background</span> in seconds</h1>
+<p class="lead">Drop in one photo or a whole batch. Get sharp, halo-free edges, then swap the background, add a shadow and export.</p>
+
+<div class="grid">
+ <section class="card" aria-label="Image workspace">
+  <div class="toolbar">
+   <div class="tgl" id="modes" role="group" aria-label="Upload mode">
+    <button data-mode="single" aria-pressed="true">Single image</button>
+    <button data-mode="folder" aria-pressed="false">Folder</button>
+   </div>
+   <div class="tgl off" id="views" role="group" aria-label="Compare view">
+    <button data-view="slider" aria-pressed="true">Slider</button>
+    <button data-view="side" aria-pressed="false">Side by side</button>
+    <button data-view="orig" aria-pressed="false">Original</button>
+    <button data-view="cut" aria-pressed="false">Cutout</button>
+   </div>
+  </div>
+  <div class="canvas" id="canvas">
+   <label class="drop" id="drop" tabindex="0">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+    <strong id="dropTitle">Drop an image here</strong>
+    <small id="dropHint"></small>
+    <span class="dbtns"><button type="button" class="btn primary" id="pick">Choose image</button><button type="button" class="btn" id="pickFiles" hidden>Choose images</button></span>
+   </label>
+   <input id="file" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
+   <input id="folder" type="file" webkitdirectory multiple hidden>
+   <div class="cmp" id="cmp">
+    <img class="after" id="after" alt="Result with background removed">
+    <img class="before" id="before" alt="Original image">
+    <span class="tag tag-l" style="left:10px">Original</span><span class="tag tag-r" style="right:10px">Cutout</span>
+    <div class="bar" id="bar" role="slider" aria-label="Compare original and cutout" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" tabindex="0"></div>
+   </div>
+   <div class="busy" id="busy"><div class="spin"></div><div>Removing background…</div></div>
+  </div>
+  <div class="queue" id="queue" aria-label="Images"></div>
+  <div class="foot">
+   <span class="msg" id="msg" role="status"></span>
+   <button class="btn" id="addBtn">New image</button>
+   <button class="btn danger" id="del" disabled title="Remove the selected image (Delete key)">Delete</button>
+   <button class="btn" id="copy" disabled>Copy</button>
+   <select class="btn" id="fmt" aria-label="Export format"><option value="png">PNG</option><option value="webp">WebP</option><option value="jpeg">JPG</option></select>
+   <button class="btn" id="dlall" disabled>Download all (ZIP)</button>
+   <button class="btn primary" id="dl" disabled>Download</button>
+  </div>
+ </section>
+
+ <aside class="card side" aria-label="Settings">
+  <div><h2>Model</h2>
+   <div class="seg">
+    <label><input type="radio" name="model" value="balanced" checked>Balanced<small>Most images</small></label>
+    <label><input type="radio" name="model" value="precision">Precision<small>Sharpest, slower</small></label>
+    <label><input type="radio" name="model" value="portrait">Portrait<small>People</small></label>
+    <label><input type="radio" name="model" value="fast">Fast<small>Quick preview</small></label>
+   </div></div>
+  <div><div class="row"><label for="refine">Edge cleanup</label><output id="rv">Medium</output></div>
+   <input type="range" id="refine" min="0" max="3" value="2"></div>
+  <label class="chk"><input type="checkbox" id="matting"><span>Fine edge detail<small>Better for hair and fur. Slower.</small></span></label>
+  <label class="chk"><input type="checkbox" id="trim"><span>Crop to subject<small>Remove empty space around the cutout.</small></span></label>
+  <div><h2>Background</h2>
+   <div class="sw" id="sw">
+    <button class="t" data-t="none" aria-pressed="true" aria-label="Transparent"></button>
+    <button data-t="solid" data-a="#ffffff" style="background:#fff" aria-label="White"></button>
+    <button data-t="solid" data-a="#0a0a0a" style="background:#0a0a0a" aria-label="Dark"></button>
+    <button data-t="grad" data-a="#ff5a1f" data-b="#0a0a0a" style="background:linear-gradient(135deg,#ff5a1f,#0a0a0a)" aria-label="Orange to black"></button>
+    <button data-t="grad" data-a="#c6ff00" data-b="#0a0a0a" style="background:linear-gradient(135deg,#c6ff00,#0a0a0a)" aria-label="Lime to black"></button>
+    <input type="color" id="custom" value="#2450ff" aria-label="Custom colour">
+    <label class="up" title="Use an image as background">▣<input type="file" id="bgimg" accept="image/*" hidden></label>
+   </div></div>
+  <label class="chk"><input type="checkbox" id="shadow"><span>Drop shadow<small>Adds depth under the subject.</small></span></label>
+  <button class="btn primary" id="run" disabled>Apply settings to all</button>
+ </aside>
+</div>
+
+<section class="results" id="results" hidden aria-label="Completed images">
+ <h2>Completed <span id="rcount"></span></h2>
+ <div class="rgrid" id="rgrid"></div>
+</section>
+
+<div class="feat">
+ <div><strong>Batch queue</strong><span>Add many images and switch between results.</span></div>
+ <div><strong>Edge refinement</strong><span>Removes halos and keeps edges crisp.</span></div>
+ <div><strong>Export your way</strong><span>PNG, WebP or JPG, with a colour, gradient or photo behind.</span></div>
+</div>
+</main>
+
+<script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

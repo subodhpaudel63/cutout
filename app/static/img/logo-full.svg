@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" role="img" aria-label="Cutout"><style>:root{--fg:#0a0a0a;--bg:#fff;--acc:#c6ff00}@media(prefers-color-scheme:dark){:root{--fg:#fff;--bg:#0a0a0a}}</style>
+  <g><pattern id="cutout-ck" width="8" height="8" patternUnits="userSpaceOnUse">
+    <rect width="8" height="8" fill="var(--bg)"/><rect width="4" height="4" fill="var(--fg)"/><rect x="4" y="4" width="4" height="4" fill="var(--fg)"/>
+  </pattern>
+  <rect x="6" y="6" width="40" height="40" fill="var(--fg)"/>
+  <rect x="2" y="2" width="40" height="40" fill="var(--acc)" stroke="var(--fg)" stroke-width="2.5"/>
+  <path class="ants" fill="url(#cutout-ck)" stroke="var(--fg)" stroke-width="1.8" stroke-dasharray="3 2.4" stroke-linejoin="round"
+    d="M14.5 16a7.5 7.5 0 1 0 15 0a7.5 7.5 0 1 0-15 0ZM9 40C9 29.5 14.5 25.5 22 25.5S35 29.5 35 40Z"/></g>
+  <text x="58" y="34" font-family="Archivo,'Arial Black',Helvetica,Arial,sans-serif" font-weight="800" font-size="30" letter-spacing="-1.2" fill="var(--fg)">Cutout</text>
+</svg>
